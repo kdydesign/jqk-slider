@@ -14,7 +14,6 @@
 	var _tempSlideSpeed;
 
 	$._jqkSlider = function(e, options) {
-		//기본 셋팅
 		var defaults = {
 				width : "100%",
 				height : "100%",
