@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>jqk-slider Demo</title>
+
+    <script src="src/js/jquery-1.10.2.min.js"></script>
+    <script src="src/js/jqk-slider/jquery.jqk-slider.js"></script>
+    <link rel="stylesheet" type="text/css" href="src/css/jqk-slider/jqk-slider.css">
+</head>
+
+<script>
+var slider = null;
+$(function(){
+   slider = $("#jqk-slider").jqkSlider({
+        width : "100%",
+        height : 500,
+        dottNav : {
+            use : true
+        },
+        moveNav : {
+            use : true
+        },
+        slideSpeed : 1000000,
+        effectSpeed : 300,
+    });
+});
+
+</script>
+<body>
+    <div class="wrapper">
+        <ul id="jqk-slider">
+            <li jqk-title="Slider Title - 1">
+                <img src="src/img/demo-img1.jpg">
+            </li>
+
+            <li jqk-title="Slider Title - 2">
+                <img src="src/img/demo-img2.jpg">
+            </li>
+
+            <li jqk-title="Slider Title - 3">
+                <img src="src/img/demo-img3.jpg">
+            </li>
+        </ul>
+    </div>
+</body>
+</html>
