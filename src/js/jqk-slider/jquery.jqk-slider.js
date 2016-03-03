@@ -21,6 +21,9 @@
 				dottNav : {
 					use : true
 				},
+				moveNav : {
+					use : true
+				},
 				slideSpeed : 5000,
 				effectSpeed : 300,
 				autoCtrlBtn : true,
