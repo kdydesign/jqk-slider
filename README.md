@@ -39,4 +39,22 @@ var slider = $("#jqk-slider").jqkSlider({
 });
 ```
 
+#Public Methods
+>You can also trigger the slider to move programmatically as well:
+
+##slideStop
+>This method allows you to stop the slider.
+
+```
+$("#jqk-slider").slideStop();
+```
+
+###slideStart
+>This method allows you to start the slider.
+
+```
+$("#jqk-slider").slideStart();
+```
+
+
 
