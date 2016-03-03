@@ -3,6 +3,7 @@
 
 #Basic Usage
 >To add this to your website, simply include the latest jQuery library together with jquery.jqk-slider.js, and jqk-slider.css, and image resources into your document's <head> and create an HTML markup as follows:
+
 ```
 <div class="wrapper">
         <ul id="jqk-slider">
@@ -22,6 +23,7 @@
 ```
 
 > And simply call the script like this:
+
 ```
 var slider = $("#jqk-slider").jqkSlider({
         width : "100%",
@@ -42,12 +44,14 @@ var slider = $("#jqk-slider").jqkSlider({
 
 #slideStop
 >This method allows you to stop the slider.
+
 ```
 $("#jqk-slider").slideStop();
 ```
 
 #slideStart
 >This method allows you to start the slider.
+
 ```
 $("#jqk-slider").slideStart();
 ```
