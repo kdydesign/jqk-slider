@@ -3,6 +3,7 @@
 
 #Basic Usage
 >To add this to your website, simply include the latest jQuery library together with jquery.jqk-slider.js, and jqk-slider.css, and image resources into your document's <head> and create an HTML markup as follows:
+
 ```
 <div class="wrapper">
         <ul id="jqk-slider">
