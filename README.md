@@ -58,8 +58,7 @@ $("#jqk-slider").slideStart();
 ```
 
 #Version
->Feb 29 2016
->1.0.0
+>Feb 29 2016 (1.0.0)
 
 
 
