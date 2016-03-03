@@ -21,3 +21,22 @@
         </ul>
 </div>
 ```
+
+> And simply call the script like this:
+
+```
+var slider = $("#jqk-slider").jqkSlider({
+        width : "100%",
+        height : 500,
+        dottNav : {
+                use : true
+        },
+        moveNav : {
+	        use : true
+	},
+        slideSpeed : 5000,              //slide speed(ms)
+        effectSpeed : 300,              //show effect speed(ms)
+});
+```
+
+
