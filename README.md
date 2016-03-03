@@ -49,7 +49,7 @@ var slider = $("#jqk-slider").jqkSlider({
 $("#jqk-slider").slideStop();
 ```
 
-#slideStart
+##slideStart
 >This method allows you to start the slider.
 
 ```
