@@ -14,11 +14,14 @@
 	var _tempSlideSpeed;
 
 	$._jqkSlider = function(e, options) {
-		//기본 셋팅
+		//default settings
 		var defaults = {
 				width : "100%",
 				height : "100%",
-				dottNav : {
+				dottedNav : {
+					use : true
+				},
+				moveNav : {
 					use : true
 				},
 				slideSpeed : 5000,
@@ -33,7 +36,7 @@
 
 		var el = $(e),
 			el_p = el.parent(),
-			dottElement = null;
+			dottedElement = null;
 
 		$this.init = function() {
 			$this.options = $.extend({}, defaults, options);
@@ -45,21 +48,24 @@
 			el_p.parent().css("position", "relative");
 		};
 
-		//도트 네비게이션 추가
-		$this.appendDottNavigation = function (listItem) {
-			var dottEl = "";
+		/**
+		 * Add Dotted Navigation 
+		 * @param listItem
+         */
+		$this.appendDottedNavigation = function (listItem) {
+			var dottedEl = "";
 
-			$(listItem).each(function(list_doot_idx, list_doot_value) {
-				dottEl += "<li class='jqk-dott-item'></li>";
+			$(listItem).each(function(list_dotted_idx, list_dotted_value) {
+				dottedEl += "<li class='jqk-dotted-item'></li>";
 			});
 
-			el_p.append("<div><ul class='jqk-dott-navigation'>" + dottEl + "</ul></div>");
+			el_p.append("<div><ul class='jqk-dotted-navigation'>" + dottedEl + "</ul></div>");
 
-			dottElement = $(".jqk-dott-navigation");
+			dottedElement = $(".jqk-dotted-navigation");
 
-			//도트 네비게이션 토글
-			$(".jqk-dott-navigation").on("click", ".jqk-dott-item", function(e){
-				if ( !listItem.is(":animated") && !$(this).hasClass("jqk-dott-item-on")) {
+			//dotted navigation event
+			$(".jqk-dotted-navigation").on("click", ".jqk-dotted-item", function(e){
+				if ( !listItem.is(":animated") && !$(this).hasClass("jqk-dotted-item-on")) {
 					clearInterval(_slideShowInterval);
 					_slideShowInterval = null;
 					_changeItem($(this).index());
@@ -67,20 +73,23 @@
 			});
 		};
 
-		//양옆 네비 추가
+		/**
+		 * Move Slider Navigation
+		 * @param listItem
+         */
 		$this.appendMoveNavigation = function (listItem) {
 			el_p.append(
 				"<div class='jqk-move-arrow jqk-move-arrow-left' jqk-move-type='left' jqk-move-bnt></div>" +
 				"<div class='jqk-move-arrow jqk-move-arrow-right' jqk-move-type='right' jqk-move-bnt></div>"
 			);
 
-			//left move
+			//left and right move event
 			el_p.find("[jqk-move-bnt]").on("click", function(e){
 				var moveType = $(this).attr("jqk-move-type");
 
 				if ( !listItem.is(":animated") ) {
 					var maxIdx = el.children("li").length;
-					var currIdx = dottElement.children(".jqk-dott-item-on").index();
+					var currIdx = dottedElement.children(".jqk-dotted-item-on").index();
 					var nextIdx = 0;
 
 					if ( moveType == "left" ) {
@@ -103,27 +112,23 @@
 		};
 
 		$this.main = function () {
-			//FadeOut, In 이펙트
 			var listItem = el.children("li");
 			var listItemLength = listItem.length;
 			var i = $this.options.stateDashIdx;
 
-			//CSS 변경
 			el.css("width", $this.options.width);
 			el.css("height", $this.options.height);
 			el.children("li").css("height", "100%");
 
 			listItem.addClass("jqk-slider-child");
 
-			$this.appendDottNavigation(listItem);
+			$this.appendDottedNavigation(listItem);
 			$this.appendMoveNavigation(listItem);
 
-			//dott Navigation 표현
-			if ( !$this.options.dottNav.use || $this.options.dottNav == false ) {
-				$(".jqk-dott-navigation").hide();
+			if ( !$this.options.dottedNav.use || $this.options.dottedNav == false ) {
+				$(".jqk-dotted-navigation").hide();
 			}
 
-			//dott Navigation 추가
 			if ( !$this.options.moveNav.use || $this.options.moveNav == false ) {
 				$(".jqk-move-arrow").hide();
 			}
@@ -138,13 +143,13 @@
 				$(listItem.eq(eq_value)).append("<label class='jqk-title-text'>" + title + "</label>");
 
 				listItem.eq(eq_value).fadeIn($this.options.effectSpeed, function(e){
-					$(".jqk-dott-navigation li").eq(eq_value).addClass("jqk-dott-item-on");
+					$(".jqk-dotted-navigation li").eq(eq_value).addClass("jqk-dotted-item-on");
 				});
 			};
 
 			_changeItem = function(getItemIdx) {
-				$(".jqk-dott-navigation li").eq(i).removeClass("jqk-dott-item-on");
-				$(".jqk-dott-navigation li").eq(i).addClass("jqk-dott-item-off");
+				$(".jqk-dotted-navigation li").eq(i).removeClass("jqk-dotted-item-on");
+				$(".jqk-dotted-navigation li").eq(i).addClass("jqk-dotted-item-off");
 
 				if ( getItemIdx != i ) {
 					listItem.eq(i).fadeOut($this.options.effectSpeed, function(e) {
@@ -164,8 +169,8 @@
 							_slideShowInterval = setInterval(_changeItem, _tempSlideSpeed);
 						}
 
-						$(".jqk-dott-navigation li").eq(i).removeClass("jqk-dott-item-off");
-						$(".jqk-dott-navigation li").eq(i).addClass("jqk-dott-item-on");
+						$(".jqk-dotted-navigation li").eq(i).removeClass("jqk-dotted-item-off");
+						$(".jqk-dotted-navigation li").eq(i).addClass("jqk-dotted-item-on");
 					});
 				}
 			};
@@ -186,14 +191,18 @@
 			plugin.main();
 		});
 	};
-	
-	//슬라이드 정지
+
+	/**
+	 * jqk-slider Stop Function
+	 */
 	$.fn.slideStop = function() {
 		clearInterval(_slideShowInterval);
 	    _slideShowInterval = null;
 	};
 
-	//슬라이드 실행
+	/**
+	 * jqk-slider Start Function
+	 */
 	$.fn.slideStart = function() {
 		_slideShowInterval = setInterval(_changeItem, _tempSlideSpeed);
 	};

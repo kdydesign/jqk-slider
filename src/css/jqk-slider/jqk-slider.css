@@ -1,11 +1,11 @@
-
+/* Common */
 ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-/*슬라이드 페이지*/
+/* Slider */
 .jqk-slider-child {
     border: 1px solid;
     border-color: #4CBABD transparent #4CBABD transparent;
@@ -18,13 +18,13 @@ ul {
     position: absolute;
 }
 
-/*도트 네비게이션*/
-.jqk-dott-navigation {
+/* Dotted Navigation */
+.jqk-dotted-navigation {
     margin-top: 5px;
     text-align: center;
 }
 
-.jqk-dott-item {
+.jqk-dotted-item {
     cursor: pointer;
     list-style: none;
     background: #b8c1cc;
@@ -37,15 +37,15 @@ ul {
     height: 1em;
 }
 
-.jqk-dott-item-on {
+.jqk-dotted-item-on {
     background: #68c9cc;
 }
 
-.jqk-dott-item-off {
+.jqk-dotted-item-off {
     background: #b8c1cc;
 }
 
-/*타이틀*/
+/* Slider Title */
 .jqk-title-text {
     position: relative;
     font-size : 4em;
@@ -54,7 +54,7 @@ ul {
     display: -webkit-box;
 }
 
-/*방향 표시*/
+/* Move Navigation */
 .jqk-move-arrow {
     height:40px;
     position: absolute;
