@@ -5,7 +5,7 @@
 #Demo
 > JSFiddle Demo
 
-[<p align="center"><a href="https://jsfiddle.net/kdydesign30/w3pb81qy/" target="_blank"><img src="https://raw.githubusercontent.com/kdydesign/jqk-slider/master/src/img/fiddle_icon.png" style="width:whatever;height:whatever;text-align:center" width="200"></a></p>]
+[<p align="center"><img src="https://raw.githubusercontent.com/kdydesign/jqk-slider/master/src/img/fiddle_icon.png" style="width:whatever;height:whatever;text-align:center" width="200"></p>](https://jsfiddle.net/kdydesign30/w3pb81qy/)
 
 #Basic Usage
 >To add this to your website, simply include the latest jQuery library together with jquery.jqk-slider.js, and jqk-slider.css, and image resources into your document's <head> and create an HTML markup as follows:
