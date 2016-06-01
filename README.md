@@ -2,6 +2,11 @@
 > Simple jQuery Slider by kdydesign.
 ![Alt Text](https://github.com/kdydesign/jqk-slider/blob/master/src/img/git-demo.png)
 
+#Demo
+> JSFiddle Demo
+
+<a href="https://jsfiddle.net/kdydesign30/w3pb81qy/" target="_blank"><p align="center"><img src="https://raw.githubusercontent.com/kdydesign/jqk-slider/master/src/img/fiddle_icon.png" style="width:whatever;height:whatever;text-align:center" width="200"></p></a>
+
 #Basic Usage
 >To add this to your website, simply include the latest jQuery library together with jquery.jqk-slider.js, and jqk-slider.css, and image resources into your document's <head> and create an HTML markup as follows:
 
