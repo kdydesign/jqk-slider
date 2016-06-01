@@ -5,7 +5,7 @@
 #Demo
 > JSFiddle Demo
 
-[<img src="https://raw.githubusercontent.com/kdydesign/jqk-slider/master/src/img/fiddle_icon.png" style="width:whatever;height:whatever;text-align:center" width="200">
+[<p align="center"><img src="https://raw.githubusercontent.com/kdydesign/jqk-slider/master/src/img/fiddle_icon.png" style="width:whatever;height:whatever;text-align:center" width="200"></p>
 ](https://jsfiddle.net/kdydesign30/w3pb81qy/)
 
 #Basic Usage
