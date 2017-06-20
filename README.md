@@ -1,13 +1,13 @@
-#jqk-Slider by kdydesign.
+# jqk-Slider by kdydesign.
 > Simple jQuery Slider by kdydesign.
 ![Alt Text](https://github.com/kdydesign/jqk-slider/blob/master/src/img/git-demo.png)
 
-#Demo
+# Demo
 > JSFiddle Demo
 
 <a href="https://jsfiddle.net/kdydesign30/w3pb81qy/" target="_blank"><p align="center"><img src="https://raw.githubusercontent.com/kdydesign/jqk-slider/master/src/img/fiddle_icon.png" style="width:whatever;height:whatever;text-align:center" width="200"></p></a>
 
-#Basic Usage
+# Basic Usage
 >To add this to your website, simply include the latest jQuery library together with jquery.jqk-slider.js, and jqk-slider.css, and image resources into your document's <head> and create an HTML markup as follows:
 
 ```
@@ -45,24 +45,24 @@ var slider = $("#jqk-slider").jqkSlider({
 });
 ```
 
-#Public Methods
+# Public Methods
 >You can also trigger the slider to move programmatically as well:
 
-##slideStop
+## slideStop
 >This method allows you to stop the slider.
 
 ```
 $("#jqk-slider").slideStop();
 ```
 
-##slideStart
+## slideStart
 >This method allows you to start the slider.
 
 ```
 $("#jqk-slider").slideStart();
 ```
 
-#Version
+# Version
 >Feb 29 2016 (1.0.0)
 
 
