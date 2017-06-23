@@ -321,7 +321,7 @@
     };
 
     window.jqkSlider = {
-        Grid: Slider,
+        Slider: Slider,
         version: '1.1.0'
     };
 
