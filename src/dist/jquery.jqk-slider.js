@@ -5,7 +5,7 @@
  *   : https://kdydesign.github.io
  *
  * Licensed under MIT license
- *   :
+ *   : https://github.com/kdydesign/jqk-slider/blob/master/LICENSE
  *
  * @version : 1.1.0
  * @since : Feb 29 2016
