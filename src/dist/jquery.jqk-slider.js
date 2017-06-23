@@ -1,209 +1,329 @@
-/**
- * jquery Slider Plug-in
- * jqk-slider.js by kdydesign
+/*
+ /**
+ * jquery simple slider plug-in
  *
- * Copyright (c) 2016 Licensed kdydesign
+ * Copyright (c) kdydesign(Dev. DY)
+ *   : https://kdydesign.github.io
  *
- * @version : 1.0.0
+ * Licensed under MIT license
+ *   : https://github.com/kdydesign/jqk-slider/blob/master/LICENSE
+ *
+ * @version : 1.1.0
  * @since : Feb 29 2016
+ * @latest: Jun 23 2017
  */
-(function($){
-	var _slideShowInterval;
-	var _changeItem;
-	var _initChangeItem;
-	var _tempSlideSpeed;
+(function (window, $, undefined) {
 
-	$._jqkSlider = function(e, options) {
-		//default settings
-		var defaults = {
-				width : "100%",
-				height : "100%",
-				dottedNav : {
-					use : true
-				},
-				moveNav : {
-					use : true
-				},
-				slideSpeed : 5000,
-				effectSpeed : 300,
-				autoCtrlBtn : true,
-				stateDashIdx : 0
-		};
-		
-		var $this = this;
+    var JQK_SLIDER = "jqkSlider",
+        JQK_SLIDER_DATA_KEY = JQK_SLIDER,
+        JQK_SLIDER_TOGGLE_KEY = "jqk-toggle";
 
-		$this.options = {};
+    function Slider(element, config) {
+        var $element = $(element);
 
-		var el = $(e),
-			el_p = el.parent(),
-			dottedElement = null;
+        this.container = $element;
 
-		$this.init = function() {
-			$this.options = $.extend({}, defaults, options);
-			_tempSlideSpeed = parseInt($this.options.slideSpeed);
-			_slideShowInterval = null;
-		    _changeItem = null;
-			_initChangeItem = null;
+        $element.data(JQK_SLIDER_DATA_KEY, this);
 
-			el_p.parent().css("position", "relative");
-		};
+        this.init(config);
+        this.render();
+    }
 
-		/**
-		 * Add Dotted Navigation 
-		 * @param listItem
-         */
-		$this.appendDottedNavigation = function (listItem) {
-			var dottedEl = "";
+    Slider.prototype = {
+        width: "100%",
+        height: "100%",
+        dottedNav: {
+            use: true
+        },
+        moveNav: {
+            use: true
+        },
+        slideSpeed: 5000,
+        effectSpeed: 300,
+        autoCtrlBtn: true,
 
-			$(listItem).each(function(list_dotted_idx, list_dotted_value) {
-				dottedEl += "<li class='jqk-dotted-item'></li>";
-			});
+        itemElements: [],
+        dottedItems: [],
+        dottedContainer: null,
+        items: [],
+        leftArrowItem: null,
+        rightArrowItem: null,
 
-			el_p.append("<div><ul class='jqk-dotted-navigation'>" + dottedEl + "</ul></div>");
+        wrapperClass: 'jqk-wrapper',
+        dottedItemsClass: 'jqk-dotted-item',
+        dottedNavClass: 'jqk-dotted-navigation',
+        arrowContainerClass: 'jqk-arrow-container',
+        arrowClass: 'jqk-move-arrow',
+        sliderItemClass: 'jqk-slider-child',
+        titleClass: 'jqk-title-text',
 
-			dottedElement = $(".jqk-dotted-navigation");
+        init: function (config) {
+            $.extend(this, config);
 
-			//dotted navigation event
-			$(".jqk-dotted-navigation").on("click", ".jqk-dotted-item", function(e){
-				if ( !listItem.is(":animated") && !$(this).hasClass("jqk-dotted-item-on")) {
-					clearInterval(_slideShowInterval);
-					_slideShowInterval = null;
-					_changeItem($(this).index());
-				}
-			});
-		};
+            this._stateDashIdx = 0;
+            this._slideShowInterval = 0;
+            this._tempSlideSpeed = this.slideSpeed;
 
-		/**
-		 * Move Slider Navigation
-		 * @param listItem
-         */
-		$this.appendMoveNavigation = function (listItem) {
-			el_p.append(
-				"<div class='jqk-move-arrow jqk-move-arrow-left' jqk-move-type='left' jqk-move-bnt></div>" +
-				"<div class='jqk-move-arrow jqk-move-arrow-right' jqk-move-type='right' jqk-move-bnt></div>"
-			);
+            this.container.parent().css('position', 'relative');
+        },
+        appendDottedNavigation: function () {
+            var self = this,
+                container = this.container,
+                conParent = container.parent(),
+                dottedArr = [];
+            var listItem = this.itemElements;
 
-			//left and right move event
-			el_p.find("[jqk-move-bnt]").on("click", function(e){
-				var moveType = $(this).attr("jqk-move-type");
+            var dottedNavContainer = this.dottedContainer = $('<ul>').addClass(this.dottedNavClass);
 
-				if ( !listItem.is(":animated") ) {
-					var maxIdx = el.children("li").length;
-					var currIdx = dottedElement.children(".jqk-dotted-item-on").index();
-					var nextIdx = 0;
+            for (var i = 0; i < listItem.length; i++) {
+                var dottedItems =
+                    $('<li>')
+                        .addClass(this.dottedItemsClass)
+                        .off('click')
+                        .on('click', function (e) {
+                            if ($(this).hasClass(this.dottedItemsClass + '-on')) {
+                                return;
+                            }
 
-					if ( moveType == "left" ) {
-						if (0 < currIdx) {
-							nextIdx = --currIdx;
-						} else {
-							nextIdx = maxIdx - 1;
-						}
-					} else if ( moveType == "right" ) {
-						if (maxIdx - 1 > currIdx) {
-							nextIdx = ++currIdx;
-						} else {
-							nextIdx = 0;
-						}
-					}
+                            self.slideStop();
+                            self.changeItem($(this).index());
+                        })
+                        .appendTo(dottedNavContainer);
 
-					_changeItem(nextIdx);
-				}
-			});
-		};
+                dottedArr.push(dottedItems)
+            }
 
-		$this.main = function () {
-			var listItem = el.children("li");
-			var listItemLength = listItem.length;
-			var i = $this.options.stateDashIdx;
+            this.dottedItems = dottedArr;
 
-			el.css("width", $this.options.width);
-			el.css("height", $this.options.height);
-			el.children("li").css("height", "100%");
+            $('<div>').append(dottedNavContainer).appendTo(conParent);
+        },
+        appendArrowNavigation: function () {
+            var container = this.container,
+                conParent = container.parent();
 
-			listItem.addClass("jqk-slider-child");
+            var arrowContainer =
+                $('<div>').addClass(this.arrowContainerClass);
 
-			$this.appendDottedNavigation(listItem);
-			$this.appendMoveNavigation(listItem);
+            this.leftArrowItem =
+                $('<div>')
+                    .addClass(this.arrowClass)
+                    .addClass(this.arrowClass + '-left')
+                    .attr('jqk-move-type', 'left')
+                    .appendTo(arrowContainer);
 
-			if ( !$this.options.dottedNav.use || $this.options.dottedNav == false ) {
-				$(".jqk-dotted-navigation").hide();
-			}
+            this.rightArrowItem =
+                $('<div>')
+                    .addClass(this.arrowClass)
+                    .addClass(this.arrowClass + '-right')
+                    .attr('jqk-move-type', 'right')
+                    .appendTo(arrowContainer);
 
-			if ( !$this.options.moveNav.use || $this.options.moveNav == false ) {
-				$(".jqk-move-arrow").hide();
-			}
+            arrowContainer.appendTo(conParent);
 
-			_initChangeItem = function (eq_value) {
-				var title = listItem.eq(eq_value).attr("jqk-title");
+            this.attachArrowEvent();
+        },
+        attachArrowEvent: function () {
+            var self = this,
+                container = this.container,
+                conParent = container.parent();
+            var listItem = this.itemElements,
+                listItemLength = listItem.length;
 
-				$(listItem.eq(eq_value)).parent().removeClass("jqk-title-parent");
-				$(".jqk-title-text").remove();
+            conParent
+                .find('[jqk-move-type]')
+                .off('click')
+                .on('click', function (e) {
+                    var moveType = $(this).attr('jqk-move-type');
 
-				$(listItem.eq(eq_value)).parent().addClass("jqk-title-parent");
-				$(listItem.eq(eq_value)).append("<label class='jqk-title-text'>" + title + "</label>");
+                    if (!self.container.children().is(":animated")) {
+                        var maxIdx = listItemLength,
+                            currIdx = self.dottedContainer.children("[class*=on]").index(),
+                            nextIdx = 0;
 
-				listItem.eq(eq_value).fadeIn($this.options.effectSpeed, function(e){
-					$(".jqk-dotted-navigation li").eq(eq_value).addClass("jqk-dotted-item-on");
-				});
-			};
+                        if (moveType === 'left') {
+                            if (0 < currIdx) {
+                                nextIdx = --currIdx;
+                            } else {
+                                nextIdx = maxIdx - 1;
+                            }
+                        } else if (moveType === 'right') {
+                            if (maxIdx - 1 > currIdx) {
+                                nextIdx = ++currIdx;
+                            } else {
+                                nextIdx = 0;
+                            }
+                        }
 
-			_changeItem = function(getItemIdx) {
-				$(".jqk-dotted-navigation li").eq(i).removeClass("jqk-dotted-item-on");
-				$(".jqk-dotted-navigation li").eq(i).addClass("jqk-dotted-item-off");
+                        self.changeItem(nextIdx);
+                    }
+                });
+        },
+        changeItem: function (getItemIdx) {
+            var container = this.container,
+                listItem = this.itemElements,
+                listItemLength = listItem.length;
 
-				if ( getItemIdx != i ) {
-					listItem.eq(i).fadeOut($this.options.effectSpeed, function(e) {
-						i += 1;
+            this.dottedItems[this._stateDashIdx]
+                .removeClass(this.dottedItemsClass + '-on')
+                .addClass(this.dottedItemsClass + '-off');
 
-						if ( i == listItemLength ) {
-							i = 0;
-						}
+            if (getItemIdx != this._stateDashIdx) {
+                if (container.data(JQK_SLIDER_TOGGLE_KEY)) {
+                    return;
+                }
 
-						if ( getItemIdx != null ) {
-							i = getItemIdx;
-						}
+                container.data(JQK_SLIDER_TOGGLE_KEY, true);
 
-						_initChangeItem(i);
+                $(listItem[this._stateDashIdx])
+                    .fadeOut(this.effectSpeed, $.proxy(function () {
+                        this._stateDashIdx += 1;
 
-						if ( _slideShowInterval == null ) {
-							_slideShowInterval = setInterval(_changeItem, _tempSlideSpeed);
-						}
+                        if (this._stateDashIdx == listItemLength) {
+                            this._stateDashIdx = 0;
+                        }
 
-						$(".jqk-dotted-navigation li").eq(i).removeClass("jqk-dotted-item-off");
-						$(".jqk-dotted-navigation li").eq(i).addClass("jqk-dotted-item-on");
-					});
-				}
-			};
+                        if (getItemIdx != null) {
+                            this._stateDashIdx = getItemIdx;
+                        }
 
-			listItem.not(":eq(" + options.stateDashIdx + ")").hide();
+                        this.changedItemRender(this._stateDashIdx);
 
-			_initChangeItem(0);
+                        if (this._slideShowInterval == null) {
+                            this.slideStart();
+                        }
 
-			_slideShowInterval = setInterval(_changeItem, _tempSlideSpeed);
-		};
-	};
+                        this.dottedItems[this._stateDashIdx]
+                            .removeClass(this.dottedItemsClass + '-off')
+                            .addClass(this.dottedItemsClass + '-on');
+                    }, this));
+            }
+        },
+        changedItemRender: function (index) {
+            var container = this.container,
+                listItem = this.itemElements,
+                title = $(listItem[index]).attr("jqk-title");
 
-	$.fn.jqkSlider = function(options) {
-		return this.each(function(){
-			var plugin = new $._jqkSlider(this, options);
+            $(listItem[index]).find('label').remove();
 
-			plugin.init();
-			plugin.main();
-		});
-	};
+            $('<label>')
+                .addClass(this.titleClass)
+                .text(title)
+                .appendTo(listItem[index]);
 
-	/**
-	 * jqk-slider Stop Function
-	 */
-	$.fn.slideStop = function() {
-		clearInterval(_slideShowInterval);
-	    _slideShowInterval = null;
-	};
+            $(listItem[index]).fadeIn(this.effectSpeed, $.proxy(function () {
+                this.dottedItems[index].addClass(this.dottedItemsClass + '-on');
+                container.data(JQK_SLIDER_TOGGLE_KEY, false);
+            }, this));
+        },
+        attachNavigations: function () {
+            this.appendDottedNavigation();
+            this.appendArrowNavigation();
+        },
+        createItemElements: function () {
+            var itemElements = [];
 
-	/**
-	 * jqk-slider Start Function
-	 */
-	$.fn.slideStart = function() {
-		_slideShowInterval = setInterval(_changeItem, _tempSlideSpeed);
-	};
-})(jQuery);
+            $.each(this.items, function (idx, obj) {
+                var keys = Object.keys(obj);
+                var img = $('<img>');
+                var listItem = $('<li>');
+
+                $.each(keys, function (idx, key) {
+                    switch (key) {
+                        case 'title' :
+                            listItem.attr('jqk-title', obj[key]);
+                            break;
+                        case 'img' :
+                            img.attr('src', obj[key]).appendTo(listItem);
+                            break;
+                        default :
+                            break;
+                    }
+                });
+
+                itemElements.push(listItem);
+            });
+
+            return $.map(itemElements, function (item) {
+                return item;
+            });
+        },
+        render: function () {
+            var wrapper = $('<div>').addClass(this.wrapperClass);
+            var container = this.container,
+                listItem = this.itemElements = this.createItemElements();
+
+            container
+                .css('width', this.width)
+                .css('height', this.height)
+                .wrap(wrapper);
+
+            $.each(listItem, $.proxy(function (idx, value) {
+                value
+                    .css('height', '100%')
+                    .addClass(this.sliderItemClass);
+
+                if (idx !== this._stateDashIdx) {
+                    value.css('display', 'none');
+                }
+
+                container.prepend(listItem);
+            }, this));
+
+            this.attachNavigations();
+
+            if (!this.dottedNav.use || this.dottedNav == false) {
+                this.dottedContainer.hide();
+            }
+
+            if (!this.moveNav.use || this.moveNav == false) {
+                this.arrowContainerClass.hide();
+            }
+
+            this.changedItemRender(0);
+            this.slideStart();
+        },
+        slideStop: function () {
+            clearInterval(this._slideShowInterval);
+            this._slideShowInterval = null;
+        },
+        slideStart: function () {
+            this._slideShowInterval = setInterval($.proxy(this.changeItem, this), this._tempSlideSpeed);
+        }
+
+    };
+
+    $.fn.jqkSlider = function (config) {
+        var args = $.makeArray(arguments),
+            methodArgs = args.slice(1),
+            result = this;
+
+        this.each(function () {
+            var $element = $(this),
+                instance = $element.data(JQK_SLIDER_DATA_KEY),
+                methodResult;
+
+            if (instance) {
+                if (typeof config === "string") {
+                    methodResult = instance[config].apply(instance, methodArgs);
+                    if (methodResult !== undefined && methodResult !== instance) {
+                        result = methodResult;
+                        return false;
+                    }
+                } else {
+                    instance.init(config);
+                    instance.render();
+                }
+            } else {
+                new Slider($element, config);
+            }
+        });
+
+        return result;
+    };
+
+    window.jqkSlider = {
+        Grid: Slider,
+        version: '1.1.0'
+    };
+
+}(window, jQuery));
