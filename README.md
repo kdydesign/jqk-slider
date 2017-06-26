@@ -101,6 +101,40 @@ or
 $("#jqk-slider").jqkSlider('slideStart')
 ```
 
+## destroy()
+Destroys the slider
+
+```javascript
+$("#jqk-slider").jqkSlider('destroy')
+```
+
+## addSlide([items])
+add slide items
+
+```javascript
+$("#jqk-slider").jqkSlider('addSlide', {img:'test.png'})
+```
+
+## removeSlide([index])
+remote slide items
+
+```javascript
+$("#jqk-slider").jqkSlider('removeSlide', 1)
+```
+
+## setSlideSpeed(speed[ms])
+set slide speed
+
+```javascript
+$("#jqk-slider").jqkSlider('setSlideSpeed', 2000)
+```
+
+## setEffectSpeed(speed[ms])
+set slide effect speed
+
+```javascript
+$("#jqk-slider").jqkSlider('setEffectSpeed', 2000)
+```
 # Version
 > Feb 29 2016 (1.0.0)
 
