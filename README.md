@@ -85,20 +85,12 @@ This method allows you to stop the slider.
 ```javascript
 $("#jqk-slider").slideStop();
 ```
-or
-```javascript
-$("#jqk-slider").jqkSlider('slideStop')
-```
 
 ## slideStart
 This method allows you to start the slider.
 
 ```javascript
 $("#jqk-slider").slideStart();
-```
-or
-```javascript
-$("#jqk-slider").jqkSlider('slideStart')
 ```
 
 ## destroy()
