@@ -1,5 +1,5 @@
 # jqk-Slider by kdydesign.
-Simple jQuery Slider by kdydesign.
+Simple jQuery Slider by kdydesign.(Dev.dy)
 ![Alt Text](https://github.com/kdydesign/jqk-slider/blob/master/src/img/git-demo.png)
 
 # Demo
@@ -103,6 +103,7 @@ $("#jqk-slider").jqkSlider('slideStart')
 
 # Version
 > Feb 29 2016 (1.0.0)
+
 > Jun 23 2017 (1.1.0.1)
 
 
