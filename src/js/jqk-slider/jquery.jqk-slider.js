@@ -1,4 +1,4 @@
- /**
+/**
  * jquery simple slider plug-in
  *
  * Copyright (c) kdydesign(Dev. DY)
@@ -13,9 +13,9 @@
  */
 (function (window, $, undefined) {
 
-    var JQK_SLIDER = "jqkSlider",
+    var JQK_SLIDER = 'jqkSlider',
         JQK_SLIDER_DATA_KEY = JQK_SLIDER,
-        JQK_SLIDER_TOGGLE_KEY = "jqk-toggle";
+        JQK_SLIDER_TOGGLE_KEY = 'jqk-toggle';
 
     function Slider(element, config) {
         var $element = $(element);
@@ -28,29 +28,65 @@
         this.render();
     }
 
+    function handleOptionChange(name, value, context) {
+        switch (name) {
+            case 'dottedNav':
+            case 'arrowNav':
+                if (!$.isPlainObject(value)) {
+                    context[name].use = value;
+                }
+                break;
+            default:
+                context[name] = value;
+                break;
+        }
+
+        switch (name) {
+            case 'width':
+            case 'height':
+                context.refreshSize();
+                break;
+            case 'dottedNav':
+                context.refreshDottedNav(value);
+                break;
+            case 'arrowNav':
+                context.refreshArrowNav(value);
+                break;
+            case 'refreshNav':
+                context.refreshNavigation(value);
+                break;
+            default:
+                context.render();
+                break;
+        }
+    }
+
     Slider.prototype = {
-        width: "100%",
-        height: "100%",
+        width: '100%',
+        height: '100%',
         dottedNav: {
             use: true
         },
-        moveNav: {
+        arrowNav: {
             use: true
         },
         slideSpeed: 5000,
         effectSpeed: 300,
         autoCtrlBtn: true,
 
+        wrapper: null,
         itemElements: [],
         dottedItems: [],
         dottedContainer: null,
         items: [],
+        arrowContainer: null,
         leftArrowItem: null,
         rightArrowItem: null,
 
         wrapperClass: 'jqk-wrapper',
         dottedItemsClass: 'jqk-dotted-item',
         dottedNavClass: 'jqk-dotted-navigation',
+        dottedContainerClass: 'jqk-dotted-container',
         arrowContainerClass: 'jqk-arrow-container',
         arrowClass: 'jqk-move-arrow',
         sliderItemClass: 'jqk-slider-child',
@@ -59,6 +95,14 @@
         init: function (config) {
             $.extend(this, config);
 
+            if (typeof this.width == 'number') {
+                this.width += 'px';
+            }
+
+            if (typeof this.height == 'number') {
+                this.height += 'px';
+            }
+
             this._stateDashIdx = 0;
             this._slideShowInterval = 0;
             this._tempSlideSpeed = this.slideSpeed;
@@ -66,8 +110,7 @@
             this.container.parent().css('position', 'relative');
         },
         appendDottedNavigation: function () {
-            var self = this,
-                container = this.container,
+            var container = this.container,
                 conParent = container.parent(),
                 dottedArr = [];
             var listItem = this.itemElements;
@@ -75,33 +118,45 @@
             var dottedNavContainer = this.dottedContainer = $('<ul>').addClass(this.dottedNavClass);
 
             for (var i = 0; i < listItem.length; i++) {
-                var dottedItems =
-                    $('<li>')
-                        .addClass(this.dottedItemsClass)
-                        .off('click')
-                        .on('click', function (e) {
-                            if ($(this).hasClass(this.dottedItemsClass + '-on')) {
-                                return;
-                            }
-
-                            self.slideStop();
-                            self.changeItem($(this).index());
-                        })
-                        .appendTo(dottedNavContainer);
-
-                dottedArr.push(dottedItems);
+                dottedArr.push(this.createOnceDottedItem());
             }
 
             this.dottedItems = dottedArr;
 
-            $('<div>').append(dottedNavContainer).appendTo(conParent);
+            $('<div>')
+                .addClass(this.dottedContainerClass)
+                .append(dottedNavContainer)
+                .appendTo(conParent);
+        },
+        createOnceDottedItem: function () {
+            var self = this;
+            var dottedItems =
+                $('<li>')
+                    .addClass(this.dottedItemsClass)
+                    .off('click')
+                    .on('click', function (e) {
+                        if ($(this).hasClass(this.dottedItemsClass + '-on')) {
+                            return;
+                        }
+
+                        self.slideStop();
+                        self.changeItem($(this).index());
+                    })
+                    .appendTo(this.dottedContainer);
+
+            return dottedItems;
         },
         appendArrowNavigation: function () {
             var container = this.container,
                 conParent = container.parent();
 
             var arrowContainer =
-                $('<div>').addClass(this.arrowContainerClass);
+                this.arrowContainer =
+                    $('<div>')
+                        .css('position', 'absolute')
+                        .css('top', '50%')
+                        .css('width', this.width)
+                        .addClass(this.arrowContainerClass);
 
             this.leftArrowItem =
                 $('<div>')
@@ -125,18 +180,18 @@
             var self = this,
                 container = this.container,
                 conParent = container.parent();
-            var listItem = this.itemElements,
-                listItemLength = listItem.length;
 
             conParent
                 .find('[jqk-move-type]')
                 .off('click')
                 .on('click', function (e) {
+                    var listItem = self.itemElements,
+                        listItemLength = listItem.length;
                     var moveType = $(this).attr('jqk-move-type');
 
-                    if (!self.container.children().is(":animated")) {
+                    if (!self.container.children().is(':animated')) {
                         var maxIdx = listItemLength,
-                            currIdx = self.dottedContainer.children("[class*=on]").index(),
+                            currIdx = self.dottedContainer.children('[class*=on]').index(),
                             nextIdx = 0;
 
                         if (moveType === 'left') {
@@ -200,7 +255,7 @@
         changedItemRender: function (index) {
             var container = this.container,
                 listItem = this.itemElements,
-                title = $(listItem[index]).attr("jqk-title");
+                title = $(listItem[index]).attr('jqk-title');
 
             $(listItem[index]).find('label').remove();
 
@@ -221,46 +276,55 @@
         createItemElements: function () {
             var itemElements = [];
 
-            $.each(this.items, function (idx, obj) {
-                var keys = Object.keys(obj);
-                var img = $('<img>');
-                var listItem = $('<li>');
-
-                $.each(keys, function (idx, key) {
-                    switch (key) {
-                        case 'title' :
-                            listItem.attr('jqk-title', obj[key]);
-                            break;
-                        case 'img' :
-                            img.attr('src', obj[key]).appendTo(listItem);
-                            break;
-                        default :
-                            break;
-                    }
-                });
-
-                itemElements.push(listItem);
-            });
+            $.each(this.items, $.proxy(function (idx, obj) {
+                itemElements.push(this.createOnceItemElements(obj, idx));
+            }, this));
 
             return $.map(itemElements, function (item) {
                 return item;
             });
         },
+        createOnceItemElements: function (item, idx) {
+            var keys = Object.keys(item);
+            var img = $('<img>');
+            var listItem = $('<li>').attr('jqk-item-index', idx);
+
+            $.each(keys, function (idx, key) {
+                switch (key) {
+                    case 'title' :
+                        listItem.attr('jqk-title', item[key]);
+                        break;
+                    case 'img' :
+                        img.attr('src', item[key]).appendTo(listItem);
+                        break;
+                    default :
+                        break;
+                }
+            });
+
+            listItem
+                .css('height', '100%')
+                .addClass(this.sliderItemClass)
+                .css('display', 'none');
+
+            return listItem;
+        },
         render: function () {
-            var wrapper = $('<div>').addClass(this.wrapperClass);
+            var wrapper =
+                $('<div>')
+                    .css('width', this.width)
+                    .css('height', this.height)
+                    .addClass(this.wrapperClass);
             var container = this.container,
                 listItem = this.itemElements = this.createItemElements();
 
             container
-                .css('width', this.width)
-                .css('height', this.height)
+                .css('height', '100%')
                 .wrap(wrapper);
 
-            $.each(listItem, $.proxy(function (idx, value) {
-                value
-                    .css('height', '100%')
-                    .addClass(this.sliderItemClass);
+            this.wrapper = container.parent();
 
+            $.each(listItem, $.proxy(function (idx, value) {
                 if (idx !== this._stateDashIdx) {
                     value.css('display', 'none');
                 }
@@ -274,12 +338,79 @@
                 this.dottedContainer.hide();
             }
 
-            if (!this.moveNav.use || this.moveNav == false) {
-                this.arrowContainerClass.hide();
+            if (!this.arrowNav.use || this.arrowNav == false) {
+                this.arrowContainer.hide();
             }
 
             this.changedItemRender(0);
             this.slideStart();
+        },
+        option: function (key, value) {
+            var optionChangingEventArgs;
+
+            if (arguments.length === 1)
+                return this[key];
+
+            optionChangingEventArgs = {
+                option: key,
+                oldValue: this[key],
+                newValue: value
+            };
+
+            handleOptionChange(optionChangingEventArgs.option, optionChangingEventArgs.newValue, this);
+        },
+        refreshSize: function () {
+            this.refreshHeight();
+            this.refreshWidth();
+        },
+        refreshNavigation: function (value) {
+            this.refreshDottedNav(value);
+            this.refreshArrowNav(value);
+        },
+        refreshHeight: function () {
+            var wrapper = this.wrapper;
+
+            wrapper.height(this.height);
+        },
+        refreshWidth: function () {
+            var wrapper = this.wrapper,
+                arrowContainer = this.arrowContainer;
+
+            wrapper.width(this.width);
+            arrowContainer.width(this.width);
+        },
+        refreshDottedNav: function (value) {
+            if ($.isPlainObject(value)) {
+                if (!value.use || value == false) {
+                    this.dottedContainer.hide();
+                } else {
+                    this.dottedContainer.show();
+                }
+            }
+        },
+        refreshArrowNav: function (value) {
+            if ($.isPlainObject(value)) {
+                if (!value.use || value == false) {
+                    this.arrowContainer.hide();
+                } else {
+                    this.arrowContainer.show();
+                }
+            }
+        },
+        destroy: function () {
+            this.clear();
+            this.container.removeData(JQK_SLIDER_DATA_KEY);
+        },
+        clear: function () {
+            this.slideStop();
+            this.wrapper.empty().css({width: '', height: ''});
+            this.items = [];
+            this.itemElements = [];
+            this.dottedItems = [];
+            this.dottedContainer = null;
+            this.arrowContainer = null;
+            this.leftArrowItem = null;
+            this.rightArrowItem = null;
         },
         slideStop: function () {
             clearInterval(this._slideShowInterval);
@@ -287,8 +418,39 @@
         },
         slideStart: function () {
             this._slideShowInterval = setInterval($.proxy(this.changeItem, this), this._tempSlideSpeed);
-        }
+        },
+        addSlide: function (item) {
+            if ($.isPlainObject(item)) {
+                var itemIndex = this.items.length;
+                var onceItem = this.createOnceItemElements(item, itemIndex);
 
+                this.items.push(item);
+                this.itemElements.push(onceItem);
+                this.container.append(onceItem);
+                this.dottedItems.push(this.createOnceDottedItem());
+
+                this.attachArrowEvent();
+            }
+        },
+        removeSlide: function (index) {
+            var self = this;
+            var idx = parseInt(index);
+
+            this.items = $.grep(self.items, function (v, i) {
+                return i != idx;
+            });
+
+            this.itemElements = $.grep(self.itemElements, function (v, i) {
+                return i != idx;
+            });
+
+            this.dottedItems = $.grep(self.dottedItems, function (v, i) {
+                return i != idx;
+            });
+
+            this.container.find('li').eq(index).remove();
+            this.dottedContainer.find('li').eq(index).remove();
+        }
     };
 
     $.fn.jqkSlider = function (config) {
@@ -302,7 +464,7 @@
                 methodResult;
 
             if (instance) {
-                if (typeof config === "string") {
+                if (typeof config === 'string') {
                     methodResult = instance[config].apply(instance, methodArgs);
                     if (methodResult !== undefined && methodResult !== instance) {
                         result = methodResult;
