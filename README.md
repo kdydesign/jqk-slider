@@ -24,7 +24,7 @@ var slider =
             dottedNav: {
                 use: true
             },
-            moveNav: {
+            arrowNav: {
                 use: true
             },
             slideSpeed: 5000,
@@ -46,8 +46,13 @@ var slider =
         });
 ```
 
+# Options
+```javascript
+$("#jqk-slider").jqkSlider("option", "width", "100%");
+```
+
 # Public Methods
-`jqkSlider` methods could be called with jsGrid `jqkSlider` plugin or directly.
+`jqkSlider` methods could be called with jqkSlider `jqkSlider` plugin or directly.
 To use `jqkSlider` plugin to call a method, just call `jqkSlider` with method name and required parameters as next arguments:
 
 ```javascript
@@ -58,7 +63,7 @@ $("#jqk-slider").jqkSlider("methodName");
 To call method directly you need to retrieve slider instance or just create slider with the constructor:
 
 ```javascript
-// retrieve grid instance from element data
+// retrieve slider instance from element data
 var slider = $("#jqk-slider").data("jqkSlider");
 ```
 
