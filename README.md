@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/kdydesign/jqk-slider.svg?branch=master)](https://travis-ci.org/kdydesign/jqk-slider)
+
 # jqk-Slider by kdydesign.
 Simple jQuery Slider by kdydesign.(Dev.dy)
 ![Alt Text](https://github.com/kdydesign/jqk-slider/blob/master/src/img/git-demo.png)
